@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" data-ceremony="<%= event.ceremonyType.toLowerCase() %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= event.title %> — Live Stream</title>
+  <meta property="og:title" content="<%= event.title %> — Live Stream">
+  <meta property="og:description" content="Watch the live stream of <%= event.title %>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/event.css">
+</head>
+<body>
+
+<!-- Ceremonial header decorations -->
+<div class="ceremony-deco">
+  <div class="deco-left"></div>
+  <div class="deco-right"></div>
+</div>
+
+<header class="event-header">
+  <div class="header-ornament top"></div>
+  <div class="event-badge"><%= event.ceremonyType %></div>
+  <h1 class="event-title"><%= event.title %></h1>
+  <div class="event-meta-row">
+    <% if (event.eventDate) { %>
+    <div class="meta-item">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+      <span><%= new Date(event.eventDate).toLocaleDateString('en-IN', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) %></span>
+    </div>
+    <% } %>
+    <% if (event.eventTime) { %>
+    <div class="meta-item">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+      <span><%= event.eventTime %> IST</span>
+    </div>
+    <% } %>
+    <% if (event.location) { %>
+    <div class="meta-item">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+      <span><%= event.location %></span>
+    </div>
+    <% } %>
+  </div>
+  <div class="header-ornament bottom"></div>
+</header>
+
+<div class="event-content">
+
+  <!-- YouTube Embed -->
+  <section class="stream-section">
+    <div class="section-label">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      Live Stream
+    </div>
+    <div class="video-wrapper">
+      <% 
+        let videoId = '';
+        try {
+          const url = new URL(event.youtubeUrl);
+          videoId = url.searchParams.get('v') || url.pathname.split('/').pop() || '';
+        } catch(e) {}
+      %>
+      <% if (videoId) { %>
+        <iframe 
+          src="https://www.youtube.com/embed/<%= videoId %>?autoplay=0&rel=0&modestbranding=1"
+          title="<%= event.title %>"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      <% } else { %>
+        <div class="video-placeholder">
+          <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="1.5"/><path d="M24 22l16 10-16 10V22z" fill="currentColor"/></svg>
+          <p>Stream link not available</p>
+          <a href="<%= event.youtubeUrl %>" target="_blank" class="btn-outline">Open on YouTube</a>
+        </div>
+      <% } %>
+    </div>
+    <div class="stream-actions">
+      <a href="<%= event.youtubeUrl %>" target="_blank" class="btn-youtube">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        Open on YouTube
+      </a>
+    </div>
+  </section>
+
+  <!-- QR Code -->
+  <section class="qr-section">
+    <div class="section-label">Share via QR Code</div>
+    <div class="qr-card">
+      <img src="<%= event.qrCode %>" alt="QR Code for YouTube Live" class="qr-img">
+      <p>Scan to open YouTube Live</p>
+    </div>
+  </section>
+
+  <!-- Google Map -->
+  <% if (event.mapsEmbed) { %>
+  <section class="map-section">
+    <div class="section-label">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+      Venue Location
+    </div>
+    <div class="map-wrapper">
+      <iframe src="<%= event.mapsEmbed %>" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <p class="location-label"><%= event.location %></p>
+  </section>
+  <% } %>
+
+  <!-- Secure Access -->
+  <section class="access-section">
+    <div class="section-label">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+      Streaming Credentials
+    </div>
+    <div class="access-card" id="access-card">
+      <div class="access-locked" id="access-locked">
+        <div class="lock-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </div>
+        <h3>Enter Access Code</h3>
+        <p>Enter the 4-digit code to view RTMP URL and Stream Key</p>
+        <div class="code-input-row">
+          <div class="code-inputs">
+            <input type="text" class="code-digit" maxlength="1" inputmode="numeric" id="d1">
+            <input type="text" class="code-digit" maxlength="1" inputmode="numeric" id="d2">
+            <input type="text" class="code-digit" maxlength="1" inputmode="numeric" id="d3">
+            <input type="text" class="code-digit" maxlength="1" inputmode="numeric" id="d4">
+          </div>
+          <button class="btn-verify" onclick="verifyCode()">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+            Unlock
+          </button>
+        </div>
+        <div class="code-error" id="code-error"></div>
+      </div>
+
+      <div class="access-unlocked hidden" id="access-unlocked">
+        <div class="unlock-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+        </div>
+        <h3>Access Granted</h3>
+        <p>Tap to view streaming credentials</p>
+        <div class="cred-buttons">
+          <button class="btn-cred" onclick="showModal('rtmp')">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            RTMP URL
+          </button>
+          <button class="btn-cred" onclick="showModal('key')">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/></svg>
+            Stream Key
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Footer -->
+<footer class="event-footer">
+  <p>Powered by EventStream &nbsp;•&nbsp; Live Event Management Platform</p>
+</footer>
+
+<!-- Modal -->
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Credential</h3>
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-value-wrap">
+        <code id="modal-value" class="modal-value"></code>
+      </div>
+      <button class="btn-copy-modal" onclick="copyModal()">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/></svg>
+        <span id="copy-text">Copy to Clipboard</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Auto theme based on IST
+  const ist = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+  const hour = ist.getHours();
+  if (hour >= 17 || hour < 6) document.documentElement.setAttribute('data-theme', 'dark');
+
+  // 4-digit code input navigation
+  const digits = ['d1','d2','d3','d4'];
+  digits.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', e => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+      if (e.target.value && i < 3) document.getElementById(digits[i+1]).focus();
+    });
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !e.target.value && i > 0) document.getElementById(digits[i-1]).focus();
+      if (e.key === 'Enter') verifyCode();
+    });
+  });
+
+  let unlockedData = {};
+
+  async function verifyCode() {
+    const code = digits.map(id => document.getElementById(id).value).join('');
+    if (code.length !== 4) {
+      showError('Please enter all 4 digits');
+      return;
+    }
+    const btn = document.querySelector('.btn-verify');
+    btn.textContent = '...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/verify-code', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ slug: '<%= event.slug %>', code })
+      });
+      const data = await res.json();
+      if (data.success) {
+        unlockedData = { rtmp: data.rtmpUrl, key: data.streamKey };
+        document.getElementById('access-locked').classList.add('hidden');
+        document.getElementById('access-unlocked').classList.remove('hidden');
+      } else {
+        showError('Incorrect code. Please try again.');
+        digits.forEach(id => document.getElementById(id).value = '');
+        document.getElementById('d1').focus();
+      }
+    } catch {
+      showError('Error verifying code. Try again.');
+    }
+    btn.textContent = 'Unlock';
+    btn.disabled = false;
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('code-error');
+    el.textContent = msg;
+    el.style.opacity = '1';
+    setTimeout(() => el.style.opacity = '0', 3000);
+  }
+
+  function showModal(type) {
+    document.getElementById('modal-title').textContent = type === 'rtmp' ? 'RTMP URL' : 'Stream Key';
+    document.getElementById('modal-value').textContent = type === 'rtmp' ? unlockedData.rtmp : unlockedData.key;
+    document.getElementById('modal').classList.remove('hidden');
+    document.getElementById('copy-text').textContent = 'Copy to Clipboard';
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.add('hidden');
+  }
+
+  function copyModal() {
+    const val = document.getElementById('modal-value').textContent;
+    navigator.clipboard.writeText(val).then(() => {
+      document.getElementById('copy-text').textContent = 'Copied!';
+      setTimeout(() => document.getElementById('copy-text').textContent = 'Copy to Clipboard', 2000);
+    });
+  }
+
+  document.getElementById('modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal')) closeModal();
+  });
+</script>
+</body>
+</html>

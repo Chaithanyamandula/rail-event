@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= event && event.id ? 'Edit' : 'New' %> Event — EventStream Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<nav class="admin-nav">
+  <div class="nav-brand">
+    <div class="nav-logo">
+      <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.5"/><path d="M13 11l8 5-8 5V11z" fill="currentColor"/></svg>
+    </div>
+    <span>EventStream</span>
+  </div>
+  <div class="nav-actions">
+    <a href="/admin/dashboard" class="nav-back">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+      Back to Dashboard
+    </a>
+    <a href="/admin/logout" class="nav-logout">Logout</a>
+  </div>
+</nav>
+
+<main class="admin-main">
+  <div class="page-header">
+    <div>
+      <h1><%= event && event.id ? 'Edit Event' : 'Create New Event' %></h1>
+      <p>Fill in the details for your live streaming event</p>
+    </div>
+  </div>
+
+  <% if (error) { %>
+    <div class="alert alert-error" style="margin-bottom: 1.5rem;">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+      <%= error %>
+    </div>
+  <% } %>
+
+  <form method="POST" action="<%= event && event.id ? '/admin/events/' + event.id + '/update' : '/admin/events/create' %>" class="event-form">
+    
+    <div class="form-section">
+      <h2 class="section-title">
+        <span class="section-num">01</span>
+        Event Details
+      </h2>
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Event Title <span class="required">*</span></label>
+          <input type="text" name="title" value="<%= event ? event.title || '' : '' %>" placeholder="e.g. Priya & Arjun's Wedding Ceremony" required>
+        </div>
+        <div class="form-group">
+          <label>Ceremony Type <span class="required">*</span></label>
+          <div class="select-wrap">
+            <select name="ceremonyType" required>
+              <option value="">Select type...</option>
+              <% ['Wedding','Reception','Sangeeth','Birthday'].forEach(type => { %>
+                <option value="<%= type %>" <%= (event && event.ceremonyType === type) ? 'selected' : '' %>><%= type %></option>
+              <% }); %>
+            </select>
+            <svg class="select-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Event Date <span class="required">*</span></label>
+          <input type="date" name="eventDate" value="<%= event ? event.eventDate || '' : '' %>" required>
+        </div>
+        <div class="form-group">
+          <label>Event Time</label>
+          <input type="time" name="eventTime" value="<%= event ? event.eventTime || '' : '' %>">
+        </div>
+        <div class="form-group full-width">
+          <label>Event Location</label>
+          <input type="text" name="location" value="<%= event ? event.location || '' : '' %>" placeholder="e.g. Taj Mahal Palace, Mumbai">
+        </div>
+        <div class="form-group full-width">
+          <label>Google Maps Embed URL <span class="optional">(optional)</span></label>
+          <input type="url" name="mapsEmbed" value="<%= event ? event.mapsEmbed || '' : '' %>" placeholder="https://www.google.com/maps/embed?pb=...">
+          <span class="field-hint">Paste the embed URL from Google Maps → Share → Embed a map</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2 class="section-title">
+        <span class="section-num">02</span>
+        Streaming Details
+      </h2>
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>YouTube Live URL <span class="required">*</span></label>
+          <input type="url" name="youtubeUrl" value="<%= event ? event.youtubeUrl || '' : '' %>" placeholder="https://www.youtube.com/watch?v=..." required>
+        </div>
+        <div class="form-group">
+          <label>RTMP URL <span class="optional">(optional)</span></label>
+          <input type="text" name="rtmpUrl" value="<%= event ? event.rtmpUrl || '' : '' %>" placeholder="rtmp://a.rtmp.youtube.com/live2">
+        </div>
+        <div class="form-group">
+          <label>Stream Key <span class="optional">(optional)</span></label>
+          <div class="input-wrap">
+            <input type="password" id="stream-key" name="streamKey" value="<%= event ? event.streamKey || '' : '' %>" placeholder="xxxx-xxxx-xxxx-xxxx">
+            <button type="button" class="toggle-pass" onclick="toggleField('stream-key')">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2 class="section-title">
+        <span class="section-num">03</span>
+        Access Security
+      </h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>4-Digit Access Code <span class="required">*</span></label>
+          <input type="text" name="accessCode" value="<%= event ? event.accessCode || '' : '' %>" 
+                 placeholder="e.g. 4821" maxlength="4" pattern="[0-9]{4}" 
+                 inputmode="numeric" required
+                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,4)">
+          <span class="field-hint">Guests must enter this code to view RTMP URL & Stream Key</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <a href="/admin/dashboard" class="btn-secondary">Cancel</a>
+      <button type="submit" class="btn-primary">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        <%= event && event.id ? 'Update Event' : 'Create Event' %>
+      </button>
+    </div>
+  </form>
+</main>
+
+<script>
+  function toggleField(id) {
+    const el = document.getElementById(id);
+    el.type = el.type === 'password' ? 'text' : 'password';
+  }
+  const hour = new Date().getHours();
+  if (hour >= 17 || hour < 6) document.documentElement.setAttribute('data-theme', 'dark');
+</script>
+</body>
+</html>
